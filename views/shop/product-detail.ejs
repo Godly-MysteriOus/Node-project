@@ -8,7 +8,7 @@
             <main class="centered">
                <h1><%= product.title %></h1>
                <hr>
-               <p class="imageHolder"><img src="<%= product.imageUrl %>" alt="" srcset=""></p>
+               <p class="imageHolder"><img src="<%= product.imageUrl %>" alt="" srcset="" class="imageHolderForProduct"></p>
                <p><%= product.price %></p>
                <p><%= product.description %></p>
                <%- include('../includes/add-to-cart.ejs') %>

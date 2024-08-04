@@ -1,25 +1,15 @@
-const cartDbFunctionality = require('../functionalities/CartDB_functions');
+const Sequelize = require('sequelize');
+const sequelize = require('../util/database');
 
-
-
-module.exports = class Cart {
-  static async addProduct(id) { 
-    return new Promise(async (resolve,reject)=>{
-      const isProductAdded = await cartDbFunctionality.addProductToCart(id);
-      resolve(isProductAdded);
-    }).catch(err=>{
-      reject(false);
-    })
+const Cart = sequelize.define('cart_table',{
+  id:{
+    type: Sequelize.INTEGER,
+    allowNull:false,
+    primaryKey:true,
+  },
+  qty:{
+    type:Sequelize.INTEGER,
+    defaultValue:1,
   }
-  static reduceQtyByOne = (id)=>{
-    cartDbFunctionality.reduceQtyOfProductByOne(id);
-  }
-  static deleteProduct = (id)=>{
-    cartDbFunctionality.deleteProductFromCart(id);
-  }
-  static async fetchAllProductsFromCartDb(){
-    return new Promise((resolve,reject)=>{
-        resolve(cartDbFunctionality.getAllProductsPresentInCartDB());
-    });
-  }
-};
+});
+module.exports = Cart;

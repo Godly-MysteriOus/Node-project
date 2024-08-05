@@ -9,14 +9,14 @@
                 <% for( let i = 0; i < products.length; i++ ) { %>
                     <% let item;
                     for (let j = 0; j < allProducts.length; j++) {
-                        if (allProducts[i].id === products[i].id) {
-                            item = allProducts[i];
+                        if (allProducts[j].id === products[i].id) {
+                            item = allProducts[j];
                             break;
                         }
                     }
                     %>
                     <div class="item-details-wrapper">
-                        <div class="productImage"><img src="<%= item.imageUrl %>" alt="random" class="imageHolderForProduct"></div>
+                        <div class="productImage"><img src="<%= item.imageUrl%>" alt="random" class="imageHolderForProduct"></div>
                         <div class="productDetailsHolder">
                             <div class="prodTitle"><%= item.title %></div>
                             <div class="prodDesc"><%= item.description %></div>

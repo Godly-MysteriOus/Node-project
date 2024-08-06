@@ -1,5 +1,5 @@
 const Product = require('../models/product');
-
+const Cart = require('../models/Cart');
 exports.getAddProduct = (req, res, next) => {
   res.render('admin/edit-product', {
     pageTitle: 'Add Product',
@@ -56,8 +56,9 @@ exports.postDeleteProduct = (req,res,next)=>{
   const prodId = req.body.prodID;
   console.log(prodId);
   Product.findOne({where:{id:prodId}})
-  .then(result=>{
-    Product.destroy({where:{id:prodId}});
+  .then(async result=>{
+    await Product.destroy({where:{id:prodId}});
+    await Cart.destroy({where:{id:prodId}});
     res.redirect('/admin/products');
   });
 }

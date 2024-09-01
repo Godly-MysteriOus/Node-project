@@ -24,6 +24,8 @@ const Product = sequelize.define('product_table',{
     type: Sequelize.STRING,
     allowNull:false
   }
+},{
+  freezeTableName: true,
 });
 
 module.exports = Product;

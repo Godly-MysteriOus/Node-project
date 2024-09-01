@@ -16,7 +16,12 @@ exports.postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
-  Product.create({title:title,price:price,imageUrl:imageUrl,description:description}).then(result=> res.redirect('/')).catch(err=>console.log(err));
+  req.user.createProduct_table({title:title, price:price, imageUrl:imageUrl, description:description, userTableId: req.user.id})
+    .then(() =>{
+      console.log('Updated Product');
+      res.redirect('/');
+    })
+    .catch(err => console.log(err));
   
 };
 exports.getEditProduct = (req,res,next)=>{

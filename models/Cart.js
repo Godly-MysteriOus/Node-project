@@ -11,5 +11,7 @@ const Cart = sequelize.define('cart_table',{
     type:Sequelize.INTEGER,
     defaultValue:1,
   }
+},{
+  freezeTableName: true,
 });
 module.exports = Cart;

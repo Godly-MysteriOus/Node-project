@@ -4,28 +4,21 @@
 
     <body>
         <%- include('../includes/navigation.ejs') %>
-        <% if (products.length>0) { %>
+        <% if (product.length>0) { %>
             <div class="container">
-                <% for( let i = 0; i < products.length; i++ ) { %>
-                    <% let item;
-                    for (let j = 0; j < allProducts.length; j++) {
-                        if (allProducts[j].id === products[i].id) {
-                            item = allProducts[j];
-                            break;
-                        }
-                    }
-                    %>
+                <% for( let i = 0; i < product.length; i++ ) { %>
+                    <% const item  = product[i] %>
                     <div class="item-details-wrapper">
                         <div class="productImage"><img src=" <%=item.imageUrl%>" alt="random" class="imageHolderForProduct"></div>
                         <div class="productDetailsHolder">
                             <div class="prodTitle"><%= item.title %></div>
                             <div class="prodDesc"><%= item.description %></div>
                             <div class="moreDetailWrapper">
-                                <div class="prodQty">Quantity: <%= products[i].qty %></div>
+                                <div class="prodQty">Quantity: <%= item.cartitem.qty %></div>
                                 <div class="price">Price: <%= item.price %> $</div>
                             </div>
                             <div class="btnActionsHolder">
-                                <%- include('../includes/delete-from-cart.ejs',{product:products[i]}) %>
+                                <%- include('../includes/delete-from-cart.ejs',{product:item}) %>
                             </div>
                         </div>
                     </div>

@@ -16,7 +16,7 @@ exports.postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
-  req.user.createProduct_table({title:title, price:price, imageUrl:imageUrl, description:description, userTableId: req.user.id})
+  req.user.createProduct({title:title, price:price, imageUrl:imageUrl, description:description})
     .then(() =>{
       console.log('Updated Product');
       res.redirect('/');

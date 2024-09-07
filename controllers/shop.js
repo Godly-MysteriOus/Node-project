@@ -32,42 +32,88 @@ exports.getIndex = (req, res, next) => {
   })
 };
 
-exports.getCart =async (req, res, next) => {
-  const allProductsInDB =await Product.findAll();
-  Cart.findAll().then(productsInCart=>{
-    res.render('shop/cart',{
-      products:productsInCart,
-      allProducts: allProductsInDB,
-      path:'/cart',
-      pageTitle: 'CART'
-    });
-  });
-};
+exports.getCart =(req, res, next) => {
 
-exports.postCart=async (req,res,next)=>{
-  const prodId = parseInt(req.body.productId);
-  const doesProductExist = await Cart.findOne({where:{id:prodId}});
-  if(doesProductExist){
-    doesProductExist.qty+=1;
-   await doesProductExist.save();
-  }
-  else{
-    await Cart.create({id:prodId});
-  }
-  const allProductsInDB =await Product.findAll();
-  Cart.findAll().then(productsInCart=>{
+  let fetchedCart;
+  let productArray;
+  req.user.getCart()
+  .then(cart=>{
+    if(cart==null){
+      productArray=[];
+    }
+    else{
+      fetchedCart = cart;
+      return fetchedCart.getProducts();
+    }
+  })
+  .then(prods=>{
+    if(prods==null){
+      productArray=[];
+    }else{
+      productArray=prods;
+    }
     res.render('shop/cart',{
-      products:productsInCart,
-      allProducts: allProductsInDB,
-      path:'/cart',
-      pageTitle: 'CART'
-    });
-  });
+        product:productArray,
+        path:'/cart',
+        pageTitle: 'CART'
+      });
+  })
+  .catch(err=>console.log(err));
+};
+//post cart working fine for now
+exports.postCart=(req,res,next)=>{
+  const prodId = parseInt(req.body.productId);
+  let fetchedCart;
+  req.user.getCart().then(cart=>{
+    if(cart==null){
+      return req.user.createCart();
+    }
+    return cart;
+    // checks whether the entry in cart table exists or not where userId = loggedInUser UID
+    // if not creates one
+  }).then(cart=>{
+    // we always get a cart object where we have userId set to loggedInUser UID
+    // not clear of what this getProducts function do
+    //shayad se yeh aisa dekh rha hai ki cartItem mein koi aisa product hai for a user with UID jiska id = given id ho ------ if YES then vo return kardega aise product ki saari detail warna cartItem mein agar present nhi hai to return karega NULL
+    fetchedCart = cart;
+    return cart.getProducts({where:{id:prodId}});
+  })
+  .then(products=>{
+    let product;
+    if(products!=null){
+      product = products[0];
+    }
+    if(product){
+      // update the quantity and save the product
+      // return fetchedCart.setProduct(product,{through:{qty:qty+1}});
+      return fetchedCart.addProduct(product,{through:{qty:product.cartitem.qty+1}});
+    }
+    else{
+      // get the product with that product id and add it to the cart item using cart table
+      return Product.findByPk(prodId).then(product=>{
+        return fetchedCart.addProduct(product,{through:{qty:1}});
+      }).catch(err=>console.log(err));
+    }
+  })
+  .then(()=>res.redirect('/cart'))
+  .catch();
 }
 exports.deleteFromCart = async (req,res,next)=>{
   const prodId = parseInt(req.body.productId);
-  await Cart.destroy({where:{id:prodId}});
-  res.redirect('/cart');
+  let fetchedCart;
+  // await Cart.destroy({where:{id:prodId}});
+  req.user.getCart()
+  .then(cart=>{
+    fetchedCart = cart;
+    return cart.getProducts({where:{id:prodId}});
+  })
+  .then(product=>{
+      return fetchedCart.removeProduct(product);
+  })
+  .then(()=>{
+    res.redirect('/cart');
+  })
+  .catch(err=>console.log(err));
 }
 exports.getOrders = (req, res, next) => {
   res.render('shop/orders', {

@@ -3,8 +3,15 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const errorController = require('./controllers/error');
 const sequelize = require('./util/database');
+
+// models import here
 const Product = require('./models/product');
 const User = require('./models/User');
+const Cart = require('./models/Cart');
+const CartItem = require('./models/cart-item');
+
+
+// code logic here
 const app = express();
 
 app.set('view engine', 'ejs');
@@ -34,8 +41,15 @@ app.use(errorController.get404);
 
 Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
 User.hasMany(Product);
+User.hasOne(Cart);
+Cart.belongsTo(User);
+Cart.belongsToMany(Product,{through:CartItem});
+Product.belongsToMany(Cart,{through:CartItem});
 
-sequelize.sync()
+sequelize.sync(
+  // {force:true}
+  // {alter:true}
+)
   .then(result => {
     return User.findByPk(1);
     // console.log(result);
@@ -48,7 +62,7 @@ sequelize.sync()
   })
   .then(() => {
     // console.log(user);
-    app.listen(3500);
+    app.listen(3000);
   })
   .catch(err => {
     console.log(err);

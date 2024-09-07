@@ -109,6 +109,7 @@ exports.deleteFromCart = async (req,res,next)=>{
   })
   .then(product=>{
       return fetchedCart.removeProduct(product);
+      // you could have also used product.cartItem.destroy();
   })
   .then(()=>{
     res.redirect('/cart');
